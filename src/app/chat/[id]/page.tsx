@@ -77,7 +77,7 @@ export default function ChatPage() {
         content: `I've generated all the code and configurations for your website. Here's what you need to do:\n\n${setupSteps}\n\nPreview your website here: ${result.preview.url}\n\nWould you like me to explain any part in more detail?`,
         timestamp: formatTimestamp(new Date())
       }])
-    } catch (error) {
+    } catch {
       setMessages(prev => [...prev, {
         role: 'assistant',
         content: 'Sorry, there was an error generating your website. Please try again.',

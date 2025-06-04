@@ -23,7 +23,7 @@ export function Markdown({ content }: MarkdownProps) {
           const match = /language-(\w+)/.exec(className || '')
           return !inline && match ? (
             <SyntaxHighlighter
-              // @ts-ignore - type mismatch in library types
+              // @ts-expect-error - type mismatch in library types
               style={oneDark}
               language={match[1]}
               PreTag="div"

@@ -2,7 +2,7 @@ import React from 'react'
 import { cn } from '@/lib/utils'
 import { Button } from './button'
 import { Textarea } from './textarea'
-import { Send, Loader2, X, Code2, Copy, Check, Rocket, Play, Terminal, FileCode, Database, Server, Brush, TestTube } from 'lucide-react'
+import { Send, Loader2, X, Code2, Copy, Check, Rocket, Terminal, FileCode, Database, Server, Brush, TestTube } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Markdown } from '@/components/Markdown'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './dialog'
@@ -10,7 +10,6 @@ import { Input } from './input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs'
 import { WebsiteRequirements } from '@/lib/website-analyzer'
 import { Timestamp } from './timestamp'
-import { formatTimestamp } from '@/lib/utils'
 
 interface ChatInterfaceProps {
   messages: {

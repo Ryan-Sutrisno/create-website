@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { Anthropic } from '@anthropic-ai/sdk'
+import { Anthropic, MessageParam } from '@anthropic-ai/sdk'
 import { WebsiteAnalyzer } from '@/lib/website-analyzer'
 import { previewStore } from '@/lib/preview-store'
 import { nanoid } from 'nanoid'
@@ -19,13 +19,22 @@ const CODE_MAX_TOKENS = 800
 const REQUEST_DELAY_MS = 15000 // 15-second delay to spread token usage across a minute
 const PREVIEW_MAX_TOKENS = 800
 
+interface AnthropicRequestParams {
+  model: string;
+  max_tokens: number;
+  temperature: number;
+  system: string;
+  messages: MessageParam[];
+}
+
 // Helper function to handle rate limits
-async function makeAnthropicRequest(params: any, retries = 3) {
+async function makeAnthropicRequest(params: AnthropicRequestParams, retries = 3) {
   try {
     return await anthropic.messages.create(params)
-  } catch (error: any) {
-    if (error?.status === 429 && retries > 0) {
-      const retryAfter = parseInt(error?.headers?.['retry-after'] || '60')
+  } catch (error: Error) {
+    if ('status' in error && error.status === 429 && retries > 0) {
+      const headers = 'headers' in error ? error.headers : {};
+      const retryAfter = parseInt(headers?.['retry-after'] || '60')
       await delay(retryAfter * 1000)
       return makeAnthropicRequest(params, retries - 1)
     }
@@ -33,10 +42,23 @@ async function makeAnthropicRequest(params: any, retries = 3) {
   }
 }
 
+interface ContentBlock {
+  type: string;
+  text?: string;
+}
+
 // Helper to safely extract text from Anthropic content blocks
-function extractText(content: any[]): string {
+function extractText(content: ContentBlock[]): string {
   const textBlock = content.find(block => block.type === 'text')
   return textBlock?.text || ''
+}
+
+interface Requirements {
+  type: string;
+  features: string[];
+  integrations: { name: string }[];
+  database?: { type: string };
+  auth?: { type: string };
 }
 
 export async function POST(request: Request) {
@@ -138,7 +160,7 @@ Integrations: ${requirements.integrations.map(i => i.name).join(', ')}`
   }
 }
 
-function generateEnvVariables(requirements: any) {
+function generateEnvVariables(requirements: Requirements) {
   const envVars: Record<string, string> = {
     NODE_ENV: 'development',
     NEXT_PUBLIC_APP_URL: 'http://localhost:3000',
@@ -156,7 +178,7 @@ function generateEnvVariables(requirements: any) {
   return envVars
 }
 
-function generateInstallCommands(requirements: any) {
+function generateInstallCommands(requirements: Requirements) {
   const commands = [
     'npm install next@latest react@latest react-dom@latest',
     'npm install tailwindcss postcss autoprefixer',
@@ -170,7 +192,7 @@ function generateInstallCommands(requirements: any) {
   return commands
 }
 
-function generateSetupInstructions(requirements: any) {
+function generateSetupInstructions(requirements: Requirements) {
   return [
     '1. Clone the repository',
     '2. Install dependencies: `npm install`',
