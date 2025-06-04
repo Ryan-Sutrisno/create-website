@@ -1,0 +1,525 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --wallet-button-bg: #141414;
+  --wallet-button-hover: #1c1c1c;
+  --wallet-accent: #00FF9D;
+  --wallet-text: #8A8F98;
+  --wallet-border: #1F2937;
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.129 0.042 264.695);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.129 0.042 264.695);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.129 0.042 264.695);
+  --primary: oklch(0.208 0.042 265.755);
+  --primary-foreground: oklch(0.984 0.003 247.858);
+  --secondary: oklch(0.968 0.007 247.896);
+  --secondary-foreground: oklch(0.208 0.042 265.755);
+  --muted: oklch(0.968 0.007 247.896);
+  --muted-foreground: oklch(0.554 0.046 257.417);
+  --accent: oklch(0.968 0.007 247.896);
+  --accent-foreground: oklch(0.208 0.042 265.755);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.929 0.013 255.508);
+  --input: oklch(0.929 0.013 255.508);
+  --ring: oklch(0.704 0.04 256.788);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.984 0.003 247.858);
+  --sidebar-foreground: oklch(0.129 0.042 264.695);
+  --sidebar-primary: oklch(0.208 0.042 265.755);
+  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-accent: oklch(0.968 0.007 247.896);
+  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
+  --sidebar-border: oklch(0.929 0.013 255.508);
+  --sidebar-ring: oklch(0.704 0.04 256.788);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* Keyframes for animations */
+@keyframes walletConnecting {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.95); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes walletConnected {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes glowPulse {
+  0% { box-shadow: 0 0 0 0 rgba(0, 255, 157, 0.2); }
+  70% { box-shadow: 0 0 0 6px rgba(0, 255, 157, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 255, 157, 0); }
+}
+
+/* Wallet Adapter Custom Styles */
+.wallet-adapter-button {
+  background-color: var(--wallet-button-bg) !important;
+  padding: 10px 18px !important;
+  height: 40px !important;
+  color: var(--wallet-text) !important;
+  font-family: inherit !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+  border: 1px solid var(--wallet-border) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  letter-spacing: -0.01em !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* Mobile optimization */
+@media (max-width: 640px) {
+  .wallet-adapter-button {
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+  }
+
+  .wallet-adapter-button-start-icon {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .wallet-adapter-modal-wrapper {
+    margin: 16px !important;
+    padding: 16px !important;
+  }
+}
+
+.wallet-adapter-button::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: radial-gradient(circle, rgba(0, 255, 157, 0.1) 0%, rgba(0, 255, 157, 0) 70%) !important;
+  transform: translate(-50%, -50%) scale(0) !important;
+  transition: transform 0.5s ease !important;
+}
+
+.wallet-adapter-button:hover::before {
+  transform: translate(-50%, -50%) scale(2) !important;
+}
+
+.wallet-adapter-button:hover {
+  background-color: var(--wallet-button-hover) !important;
+  color: white !important;
+  border-color: #374151 !important;
+  transform: translateY(-1px) !important;
+}
+
+.wallet-adapter-button[data-connecting="true"] {
+  animation: walletConnecting 1s infinite ease-in-out !important;
+}
+
+.wallet-adapter-button[data-connected="true"] {
+  color: var(--wallet-accent) !important;
+  border-color: var(--wallet-accent) !important;
+  background: rgba(0, 255, 157, 0.1) !important;
+  animation: walletConnected 0.5s ease-out, glowPulse 2s infinite !important;
+}
+
+.wallet-adapter-button[data-connected="true"]:hover {
+  background: rgba(0, 255, 157, 0.15) !important;
+  color: var(--wallet-accent) !important;
+  transform: translateY(-1px) !important;
+}
+
+.wallet-adapter-button-start-icon {
+  width: 20px !important;
+  height: 20px !important;
+  margin: 0 !important;
+}
+
+/* Modal Styles with mobile optimization */
+.wallet-adapter-modal-wrapper {
+  background-color: var(--wallet-button-bg) !important;
+  border: 1px solid var(--wallet-border) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.32) !important;
+  padding: 24px !important;
+  max-width: 400px !important;
+  width: calc(100% - 32px) !important;
+  margin: 16px auto !important;
+}
+
+.wallet-adapter-modal-button-close {
+  background-color: var(--wallet-button-hover) !important;
+  padding: 8px !important;
+  margin: 16px !important;
+  border-radius: 8px !important;
+  width: 32px !important;
+  height: 32px !important;
+  transition: all 0.2s ease !important;
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+}
+
+.wallet-adapter-modal-button-close:hover {
+  background-color: #262626 !important;
+  transform: rotate(90deg) !important;
+}
+
+.wallet-adapter-modal-title {
+  color: white !important;
+  font-weight: 500 !important;
+  font-size: clamp(16px, 4vw, 18px) !important;
+  margin-bottom: 16px !important;
+}
+
+.wallet-adapter-modal-content {
+  color: var(--wallet-text) !important;
+  margin-bottom: 16px !important;
+  font-size: clamp(13px, 3.5vw, 14px) !important;
+  line-height: 1.5 !important;
+}
+
+.wallet-adapter-modal-list {
+  margin: 0 !important;
+  padding: 4px !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-radius: 12px !important;
+  display: grid !important;
+  gap: 4px !important;
+  max-height: 400px !important;
+  overflow-y: auto !important;
+}
+
+/* Mobile scrollbar styling */
+.wallet-adapter-modal-list::-webkit-scrollbar {
+  width: 4px !important;
+}
+
+.wallet-adapter-modal-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-radius: 4px !important;
+}
+
+.wallet-adapter-modal-list::-webkit-scrollbar-thumb {
+  background: var(--wallet-border) !important;
+  border-radius: 4px !important;
+}
+
+.wallet-adapter-modal-list li {
+  padding: 4px !important;
+  margin: 0 !important;
+}
+
+.wallet-adapter-modal-list .wallet-adapter-button {
+  font-weight: 500 !important;
+  padding: clamp(12px, 3vw, 16px) !important;
+  border-radius: 8px !important;
+  color: white !important;
+  background-color: transparent !important;
+  border: none !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  justify-content: flex-start !important;
+  gap: 12px !important;
+}
+
+.wallet-adapter-modal-list .wallet-adapter-button:active {
+  transform: scale(0.98) !important;
+}
+
+.wallet-adapter-modal-list .wallet-adapter-button-start-icon {
+  width: clamp(28px, 8vw, 32px) !important;
+  height: clamp(28px, 8vw, 32px) !important;
+  border-radius: 8px !important;
+  padding: 4px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  transition: transform 0.2s ease !important;
+}
+
+.wallet-adapter-modal-list .wallet-adapter-button:hover .wallet-adapter-button-start-icon {
+  transform: scale(1.1) !important;
+}
+
+.dark {
+  --background: oklch(0.129 0.042 264.695);
+  --foreground: oklch(0.984 0.003 247.858);
+  --card: oklch(0.208 0.042 265.755);
+  --card-foreground: oklch(0.984 0.003 247.858);
+  --popover: oklch(0.208 0.042 265.755);
+  --popover-foreground: oklch(0.984 0.003 247.858);
+  --primary: oklch(0.929 0.013 255.508);
+  --primary-foreground: oklch(0.208 0.042 265.755);
+  --secondary: oklch(0.279 0.041 260.031);
+  --secondary-foreground: oklch(0.984 0.003 247.858);
+  --muted: oklch(0.279 0.041 260.031);
+  --muted-foreground: oklch(0.704 0.04 256.788);
+  --accent: oklch(0.279 0.041 260.031);
+  --accent-foreground: oklch(0.984 0.003 247.858);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.551 0.027 264.364);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.208 0.042 265.755);
+  --sidebar-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-accent: oklch(0.279 0.041 260.031);
+  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.551 0.027 264.364);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom Scrollbar */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #141414;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #1F1F1F;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #2A2A2A;
+}
+
+/* Animations */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slide-down {
+  from { transform: translateY(-10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes glow {
+  0% { box-shadow: 0 0 0 0 hsl(var(--accent) / 0.1); }
+  50% { box-shadow: 0 0 20px 5px hsl(var(--accent) / 0.1); }
+  100% { box-shadow: 0 0 0 0 hsl(var(--accent) / 0.1); }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.3s ease-out;
+}
+
+.hover-glow:hover {
+  animation: glow 2s infinite;
+}
+
+.hover-float:hover {
+  animation: float 2s infinite;
+}
+
+/* Interactive Card */
+.interactive-card {
+  @apply relative overflow-hidden transition-all duration-300 bg-[#111111] hover:bg-[#161616];
+}
+
+.interactive-card::before {
+  content: '';
+  @apply absolute inset-0 bg-accent/5 opacity-0 transition-opacity duration-300;
+}
+
+.interactive-card:hover::before {
+  @apply opacity-100;
+}
+
+.interactive-card::after {
+  content: '';
+  @apply absolute -inset-px bg-gradient-to-r from-accent/0 via-accent/10 to-accent/0 opacity-0 transition-opacity duration-300;
+}
+
+.interactive-card:hover::after {
+  @apply opacity-100;
+}
+
+.interactive-card .card-content {
+  @apply relative z-10 transition-transform duration-300;
+}
+
+.interactive-card:hover .card-content {
+  transform: translateY(-2px);
+}
+
+.interactive-card .card-image {
+  @apply transition-all duration-300 bg-[#161616];
+}
+
+.interactive-card:hover .card-image {
+  @apply ring-1 ring-accent/20 brightness-110;
+}
+
+/* Console Input Styles */
+.console-input {
+  @apply bg-[#111111] border-[#1f1f1f] focus-within:border-accent/50;
+}
+
+.console-input input {
+  @apply bg-transparent text-[#e0e0e0] placeholder-[#4a4a4a];
+}
+
+/* Table Styles */
+.task-table {
+  @apply bg-[#111111];
+}
+
+.task-table th {
+  @apply text-[#4a4a4a] font-normal;
+}
+
+.task-table td {
+  @apply border-[#1f1f1f];
+}
+
+.task-table tr:hover {
+  @apply bg-[#161616] transition-colors;
+}
+
+/* Chat animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chat-message-enter {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+/* Message input animations */
+@keyframes expandInput {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.chat-input-enter {
+  animation: expandInput 0.3s ease-out forwards;
+}
+
+/* Loading animation */
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.5;
+  }
+}
+
+.loading-pulse {
+  animation: pulse 1.5s ease-in-out infinite;
+}
