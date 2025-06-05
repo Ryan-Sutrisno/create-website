@@ -1,6 +1,27 @@
 import { logger } from './logger'
 import { WebsiteRequirements } from './website-analyzer'
 
+interface GenerateResponse {
+  explanation: string;
+  requirements: WebsiteRequirements;
+  setup: {
+    envVariables: Record<string, string>;
+    installCommands: string[];
+    setupInstructions: string[];
+  };
+  code: {
+    frontend?: string;
+    backend?: string;
+    database?: string;
+    api?: string;
+    contracts?: string | null;
+  };
+  preview: {
+    id: string;
+    url: string;
+  };
+}
+
 export class AIService {
   private static instance: AIService
   private constructor() {}
@@ -12,7 +33,7 @@ export class AIService {
     return AIService.instance
   }
 
-  async generateWebsite(prompt: string) {
+  async generateWebsite(prompt: string): Promise<GenerateResponse> {
     try {
       const response = await fetch('/api/generate', {
         method: 'POST',

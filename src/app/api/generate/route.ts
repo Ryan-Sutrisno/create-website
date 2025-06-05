@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { Anthropic, MessageParam } from '@anthropic-ai/sdk'
+import { Anthropic } from '@anthropic-ai/sdk'
 import { WebsiteAnalyzer } from '@/lib/website-analyzer'
 import { previewStore } from '@/lib/preview-store'
 import { nanoid } from 'nanoid'
@@ -24,17 +24,24 @@ interface AnthropicRequestParams {
   max_tokens: number;
   temperature: number;
   system: string;
-  messages: MessageParam[];
+  messages: { role: 'user' | 'assistant'; content: string }[];
+}
+
+interface AnthropicError {
+  status: number;
+  headers?: {
+    'retry-after'?: string;
+  };
 }
 
 // Helper function to handle rate limits
 async function makeAnthropicRequest(params: AnthropicRequestParams, retries = 3) {
   try {
     return await anthropic.messages.create(params)
-  } catch (error: Error) {
-    if ('status' in error && error.status === 429 && retries > 0) {
-      const headers = 'headers' in error ? error.headers : {};
-      const retryAfter = parseInt(headers?.['retry-after'] || '60')
+  } catch (error: unknown) {
+    if (error && typeof error === 'object' && 'status' in error && error.status === 429 && retries > 0) {
+      const anthropicError = error as AnthropicError
+      const retryAfter = parseInt(anthropicError.headers?.['retry-after'] || '60')
       await delay(retryAfter * 1000)
       return makeAnthropicRequest(params, retries - 1)
     }
@@ -193,10 +200,30 @@ function generateInstallCommands(requirements: Requirements) {
 }
 
 function generateSetupInstructions(requirements: Requirements) {
-  return [
+  const steps = [
     '1. Clone the repository',
     '2. Install dependencies: `npm install`',
     '3. Copy `.env.example` to `.env` and fill in the values',
-    '4. Run the development server: `npm run dev`',
   ]
+
+  // Add database-specific steps
+  if (requirements.database?.type === 'postgresql') {
+    steps.push('4. Set up PostgreSQL database')
+    steps.push('5. Run database migrations: `npx prisma migrate dev`')
+  } else if (requirements.database?.type === 'mongodb') {
+    steps.push('4. Set up MongoDB database')
+    steps.push('5. Configure MongoDB connection string')
+  }
+
+  // Add authentication-specific steps
+  if (requirements.auth?.type === 'oauth') {
+    steps.push('6. Configure OAuth providers')
+  } else if (requirements.auth?.type === 'web3') {
+    steps.push('6. Configure Web3 wallet connection')
+  }
+
+  // Add final steps
+  steps.push('7. Run the development server: `npm run dev`')
+
+  return steps
 } 

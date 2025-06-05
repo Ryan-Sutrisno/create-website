@@ -4,7 +4,7 @@ import { logger } from '@/lib/logger'
 
 export async function POST(request: Request) {
   try {
-    const { messages, config } = await request.json()
+    const { messages } = await request.json()
     const lastMessage = messages[messages.length - 1]
 
     if (!lastMessage || !lastMessage.content) {
@@ -15,14 +15,15 @@ export async function POST(request: Request) {
     }
 
     const aiService = AIService.getInstance()
-    const result = await aiService.generateDapp(lastMessage.content, config)
+    const result = await aiService.generateWebsite(lastMessage.content)
 
     return NextResponse.json({
       message: result.explanation,
-      dapp: {
-        contracts: result.contracts,
-        frontend: result.frontend,
-        tests: result.tests
+      website: {
+        requirements: result.requirements,
+        setup: result.setup,
+        code: result.code,
+        preview: result.preview
       }
     })
   } catch (error) {

@@ -1,5 +1,3 @@
-import { logger } from './logger'
-
 export interface WebsiteRequirements {
   type: WebsiteType
   features: string[]

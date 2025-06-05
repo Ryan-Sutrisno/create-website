@@ -51,7 +51,7 @@ export function ChatInterface({
   onLocalTest,
   onClose,
   isLoading,
-  isTestingLocally,
+  isTestingLocally: _isTestingLocally,
   className
 }: ChatInterfaceProps) {
   const [input, setInput] = React.useState('')
@@ -64,6 +64,7 @@ export function ChatInterface({
   const [testName, setTestName] = React.useState('')
   const [selectedTab, setSelectedTab] = React.useState('frontend')
   const messagesEndRef = React.useRef<HTMLDivElement>(null)
+  const [testingLocally, setTestingLocally] = React.useState(false)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -87,7 +88,7 @@ export function ChatInterface({
     setTimeout(() => setCopiedCode(null), 2000)
   }
 
-  const handleDeploy = async (message: any) => {
+  const handleDeploy = async () => {
     if (!onDeploy) return
     setIsDeploying(true)
     try {
@@ -100,19 +101,20 @@ export function ChatInterface({
 
   const handleLocalTest = async () => {
     if (!onLocalTest) return
-    setIsTestingLocally(true)
+    setTestingLocally(true)
     try {
       await onLocalTest(testName)
       setShowTestDialog(false)
     } finally {
-      setIsTestingLocally(false)
+      setTestingLocally(false)
     }
   }
 
   const renderCodeSection = (message: typeof messages[0]) => {
     if (!message.website?.code) return null
 
-    const codeFiles = {
+    type CodeFile = { title: string; icon: JSX.Element; code?: string; language: string }
+    const codeFiles: Record<string, CodeFile> = {
       frontend: {
         title: 'Frontend',
         icon: <FileCode className="w-4 h-4" />,
@@ -378,9 +380,9 @@ export function ChatInterface({
             <Button
               onClick={handleLocalTest}
               className="bg-[#1A1A2F] hover:bg-[#2A2A4A] text-[#60A5FA]"
-              disabled={!testName || isTestingLocally}
+              disabled={!testName || testingLocally}
             >
-              {isTestingLocally ? (
+              {testingLocally ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Setting up...

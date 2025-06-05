@@ -207,10 +207,12 @@ MIT
   private async deployToVercel(dir: string) {
     // This would use Vercel API to deploy the frontend
     // For now, return a placeholder URL
-    return `https://${dir}.vercel.app`
+    const projectName = path.basename(dir)
+    logger.info('Deploying to Vercel', { projectDir: dir })
+    return `https://${projectName}.vercel.app`
   }
 
-  private async deployToSolana(dir: string) {
+  private async deployToSolana(_dir: string) {
     // This would use Solana CLI to deploy the program
     // For now, return a placeholder program ID
     return '11111111111111111111111111111111'

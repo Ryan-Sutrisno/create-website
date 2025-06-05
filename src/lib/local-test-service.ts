@@ -13,6 +13,11 @@ interface LocalTestConfig {
   tests: string
 }
 
+interface TestError extends Error {
+  stdout?: string
+  stderr?: string
+}
+
 export class LocalTestService {
   private static instance: LocalTestService
   private workspaceDir: string
@@ -142,12 +147,12 @@ test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
     try {
       // Kill any existing test validator
       await execAsync('pkill -f solana-test-validator')
-    } catch (error) {
+    } catch {
       // Ignore error if no process was running
     }
 
     // Start new test validator
-    const validator = exec('solana-test-validator', {
+    exec('solana-test-validator', {
       stdio: 'inherit'
     })
 
@@ -162,12 +167,12 @@ test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
     })
   }
 
-  private async buildAndDeployProgram(dir: string) {
+  private async buildAndDeployProgram(projectDir: string) {
     // Build program
-    await execAsync('anchor build', { cwd: dir })
+    await execAsync('anchor build', { cwd: projectDir })
 
     // Get program ID
-    const { stdout: programId } = await execAsync('anchor deploy', { cwd: dir })
+    const { stdout: programId } = await execAsync('anchor deploy', { cwd: projectDir })
     return programId.trim()
   }
 
@@ -185,11 +190,12 @@ test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
         output: stdout,
         errors: stderr
       }
-    } catch (error: any) {
+    } catch (error) {
+      const testError = error as TestError
       return {
         success: false,
-        output: error.stdout,
-        errors: error.stderr
+        output: testError.stdout || '',
+        errors: testError.stderr || ''
       }
     }
   }

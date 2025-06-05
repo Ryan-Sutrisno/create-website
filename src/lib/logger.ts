@@ -1,5 +1,9 @@
 type LogLevel = 'debug' | 'info' | 'warn' | 'error'
 
+interface LogData {
+  [key: string]: unknown;
+}
+
 class Logger {
   private static instance: Logger
   private isDevelopment: boolean
@@ -15,7 +19,7 @@ class Logger {
     return Logger.instance
   }
 
-  private log(level: LogLevel, message: string, data?: any) {
+  private log(level: LogLevel, message: string, data?: LogData) {
     if (!this.isDevelopment) return
 
     const timestamp = new Date().toISOString()
@@ -24,19 +28,19 @@ class Logger {
     console.log(`[${timestamp}] ${level.toUpperCase()}: ${message}${logData ? `\n${logData}` : ''}`)
   }
 
-  debug(message: string, data?: any) {
+  debug(message: string, data?: LogData) {
     this.log('debug', message, data)
   }
 
-  info(message: string, data?: any) {
+  info(message: string, data?: LogData) {
     this.log('info', message, data)
   }
 
-  warn(message: string, data?: any) {
+  warn(message: string, data?: LogData) {
     this.log('warn', message, data)
   }
 
-  error(message: string, data?: any) {
+  error(message: string, data?: LogData) {
     this.log('error', message, data)
   }
 }
